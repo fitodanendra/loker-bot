@@ -1,13 +1,15 @@
 {
  "active": [
   "3d",
+  "editor",
   "fullstack",
   "motion",
   "uiux",
   "video"
  ],
  "custom": {
-  "3d": "3d"
+  "3d": "3d",
+  "editor": "editor"
  },
- "last_update_id": 681032113
+ "last_update_id": 681032114
 }
