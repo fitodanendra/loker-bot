@@ -1,0 +1,24 @@
+name: Daftarkan Ulang Telegram
+
+# Run this manually after changing the Telegram bot token (or if the bot stops
+# answering commands). It re-registers the webhook and the command menu.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Register webhook and command menu
+        env:
+          STATE_URL: ${{ secrets.STATE_URL }}
+          STATE_SECRET: ${{ secrets.STATE_SECRET }}
+        run: |
+          response=$(curl -sS --fail-with-body -X POST \
+            -H "Authorization: Bearer ${STATE_SECRET}" "${STATE_URL%/}/setup")
+          echo "Worker response: ${response}"
+          echo "${response}" | grep -q '"webhook":true' || { echo "::error::Webhook registration failed. Check TELEGRAM_BOT_TOKEN in Cloudflare."; exit 1; }
