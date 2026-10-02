@@ -4,10 +4,19 @@ Bot Telegram yang mengecek lowongan baru setiap 10 menit dari **JobStreet, Kalib
 lalu mengirim notifikasi + tombol link apply ke Telegram Anda.
 
 ## Cara kerja
-1. cron-job.org memicu GitHub Actions tiap 10 menit, yang menjalankan `python -m loker_bot.main` (gratis).
-2. Bot mencari setiap kata kunci di `config.json`, menyaring judul, lokasi, dan umur lowongan.
-3. Lowongan yang belum pernah dikirim → dikirim ke Telegram, lalu dicatat di `seen.json`
-   supaya tidak dikirim dua kali.
+```
+cron-job.org ──tiap 10 menit──▶ GitHub Actions (python -m loker_bot.main)
+                                   │  cari lowongan JobStreet / Kalibrr / LinkedIn
+                                   │  kirim notifikasi ke Telegram
+                                   ▼
+Telegram ──perintah /pilih dll──▶ Cloudflare Worker (worker/) ──▶ Workers KV
+                                   (balas instan)                 prefs, seen, config
+```
+1. **Cloudflare Worker** menerima perintah Telegram lewat webhook dan langsung membalas.
+   Pilihan kategori/lokasi disimpan di Workers KV.
+2. **GitHub Actions** (dipicu cron-job.org tiap 10 menit) membaca pilihan + daftar lowongan yang
+   sudah dikirim dari Worker, mencari lowongan baru, mengirimnya ke Telegram, lalu menyimpan
+   daftar terbaru ke Worker. Tidak ada commit otomatis.
 
 ## Setup (sekali saja, ±10 menit)
 
@@ -63,8 +72,8 @@ Kirim perintah ini ke bot (juga muncul di tombol menu `/`):
 | `/hapuslokasi bogor` | Hapus lokasi |
 | `/semualokasi` | Cari di seluruh Indonesia |
 
-Perintah dibaca setiap kali bot mengecek (maks. ±10 menit). Mau langsung? Buka tab **Actions → Run workflow**.
-Pilihan disimpan di `prefs.json`. Hanya chat ID pemilik yang bisa mengubah kategori.
+Perintah dibalas **instan** oleh Cloudflare Worker. Lowongan untuk pilihan baru muncul di pengecekan berikutnya (maks. ±10 menit).
+Hanya chat ID pemilik yang bisa mengubah pengaturan.
 
 ## Mengubah kata kunci / lokasi
 Edit `config.json`:
@@ -85,7 +94,20 @@ Edit `config.json`:
 - Kalau suatu situs mengubah tampilannya, sumber itu akan gagal sementara tanpa menghentikan sumber lain
   (lihat log di tab Actions).
 
+## Worker (Cloudflare)
+```bash
+cd worker
+npx wrangler deploy                      # deploy perubahan
+npx wrangler secret put TELEGRAM_BOT_TOKEN  # ganti token Telegram
+npx wrangler tail                        # lihat log langsung
+```
+Secrets Worker: `TELEGRAM_BOT_TOKEN`, `OWNER_CHAT_ID`, `WEBHOOK_SECRET`, `STATE_SECRET`.
+Secrets GitHub: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `STATE_URL`, `STATE_SECRET`.
+Setelah deploy pertama atau ganti token: `curl -X POST -H "Authorization: Bearer <STATE_SECRET>" <STATE_URL>/setup`
+untuk mendaftarkan webhook dan menu perintah.
+
 ## Tes
 ```bash
 python3 -m unittest
+cd worker && node --test
 ```
