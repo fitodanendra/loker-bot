@@ -1,0 +1,22 @@
+{
+  "searches": [
+    {
+      "name": "video",
+      "query": "video editor",
+      "title_must_include": ["video", "editor", "videographer"]
+    },
+    {
+      "name": "motion",
+      "query": "motion graphic",
+      "title_must_include": ["motion", "animator", "animation", "after effects"]
+    },
+    {
+      "name": "fullstack",
+      "query": "full stack developer",
+      "title_must_include": ["full stack", "fullstack", "full-stack", "web developer", "frontend", "front end", "backend", "back end", "software engineer", "programmer"]
+    }
+  ],
+  "locations": ["Jakarta", "Tangerang", "Bekasi", "Depok", "Bogor"],
+  "include_remote": true,
+  "max_age_hours": 48
+}
