@@ -45,6 +45,10 @@ class HandleCommandTest(unittest.TestCase):
         active, _ = handle_command("/Pilih@pencarijob_bot FullStack", CATEGORIES, ALL)
         self.assertEqual(active, frozenset({"fullstack"}))
 
+    def test_ignores_punctuation_in_category_names(self):
+        active, _ = handle_command("/tambah UI/UX", ("video", "uiux"), frozenset({"video"}))
+        self.assertEqual(active, frozenset({"video", "uiux"}))
+
     def test_status_lists_categories_without_change(self):
         active, reply = handle_command("/kategori", CATEGORIES, frozenset({"video"}))
 

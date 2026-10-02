@@ -17,7 +17,7 @@ def handle_command(text: str, categories: tuple[str, ...], active: Active) -> tu
     if not words or not words[0].startswith("/"):
         return active, HELP
     command = words[0].split("@")[0]
-    names = words[1:]
+    names = [_normalize(word) for word in words[1:] if _normalize(word)]
 
     if command in ("/kategori", "/status", "/start"):
         return active, _status(categories, active)
@@ -26,6 +26,10 @@ def handle_command(text: str, categories: tuple[str, ...], active: Active) -> tu
     if command in ("/pilih", "/tambah", "/hapus"):
         return _change(command, names, categories, active)
     return active, HELP
+
+
+def _normalize(name: str) -> str:
+    return "".join(char for char in name if char.isalnum())
 
 
 def _change(command: str, names: list[str], categories: tuple[str, ...], active: Active):

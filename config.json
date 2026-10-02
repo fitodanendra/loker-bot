@@ -14,6 +14,11 @@
       "name": "fullstack",
       "query": "full stack developer",
       "title_must_include": ["full stack", "fullstack", "full-stack", "web developer", "frontend", "front end", "backend", "back end", "software engineer", "programmer"]
+    },
+    {
+      "name": "uiux",
+      "query": "ui ux designer",
+      "title_must_include": ["ui/ux", "ui ux", "uiux", "ui designer", "ux designer", "ui/ux designer", "product designer", "ux researcher", "user interface", "user experience"]
     }
   ],
   "locations": ["Jakarta", "Tangerang", "Bekasi", "Depok", "Bogor"],
