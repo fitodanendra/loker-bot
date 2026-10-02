@@ -4,7 +4,7 @@ Bot Telegram yang mengecek lowongan baru setiap 30 menit dari **JobStreet, Kalib
 lalu mengirim notifikasi + tombol link apply ke Telegram Anda.
 
 ## Cara kerja
-1. GitHub Actions menjalankan `python -m loker_bot.main` tiap 30 menit (gratis).
+1. cron-job.org memicu GitHub Actions tiap 30 menit, yang menjalankan `python -m loker_bot.main` (gratis).
 2. Bot mencari setiap kata kunci di `config.json`, menyaring judul, lokasi, dan umur lowongan.
 3. Lowongan yang belum pernah dikirim → dikirim ke Telegram, lalu dicatat di `seen.json`
    supaya tidak dikirim dua kali.

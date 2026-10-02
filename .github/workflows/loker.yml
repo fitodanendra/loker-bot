@@ -1,9 +1,8 @@
 name: Cek Lowongan
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"   # every 30 minutes (GitHub may delay a few minutes)
-  workflow_dispatch:          # "Run workflow" button for manual runs
+  # Triggered every 30 minutes by cron-job.org (GitHub's own schedule proved unreliable).
+  workflow_dispatch:          # also the "Run workflow" button for manual runs
 
 permissions:
   contents: write             # needed to save seen.json back to the repo
