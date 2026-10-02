@@ -55,6 +55,8 @@ Kirim perintah ini ke bot (juga muncul di tombol menu `/`):
 | `/tambah motion` | Aktifkan kategori tambahan |
 | `/hapus video` | Matikan satu kategori |
 | `/semua` | Aktifkan semua kategori |
+| `/baru graphic designer` | Buat kategori baru (judul harus mengandung semua kata) |
+| `/buang graphicdesigner` | Hapus kategori buatan sendiri (maks. 10 kategori buatan) |
 
 Perintah dibaca setiap kali bot mengecek (maks. ±30 menit). Mau langsung? Buka tab **Actions → Run workflow**.
 Pilihan disimpan di `prefs.json`. Hanya chat ID pemilik yang bisa mengubah kategori.

@@ -12,10 +12,12 @@ def is_wanted(job: Job, search: Search, settings: Settings, now: datetime) -> bo
 
 
 def _title_matches(job: Job, search: Search) -> bool:
-    if not search.title_must_include:
-        return True
     title = job.title.lower()
-    return any(word.lower() in title for word in search.title_must_include)
+    has_any = not search.title_must_include or any(
+        word.lower() in title for word in search.title_must_include
+    )
+    has_all = all(word.lower() in title for word in search.title_must_include_all)
+    return has_any and has_all
 
 
 def _location_matches(job: Job, settings: Settings) -> bool:

@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Callable
 
 from loker_bot.config import ConfigError, load_config
+from loker_bot.custom import custom_searches
 from loker_bot.filters import is_wanted
 from loker_bot.inbox import Prefs, active_searches, load_prefs, process_updates, save_prefs
 from loker_bot.models import Job, Search, Settings
@@ -36,6 +37,8 @@ BOT_COMMANDS = [
     ("tambah", "Aktifkan kategori, mis. /tambah motion"),
     ("hapus", "Matikan kategori, mis. /hapus video"),
     ("semua", "Aktifkan semua kategori"),
+    ("baru", "Buat kategori baru, mis. /baru graphic designer"),
+    ("buang", "Hapus kategori buatan sendiri"),
 ]
 
 SourceFn = Callable[[str], list[Job]]
@@ -144,7 +147,7 @@ def run(dry_run: bool) -> int:
     else:
         prefs = _read_commands(client, categories)
         send = _telegram_sender(client)
-    chosen = active_searches(searches, prefs.active)
+    chosen = active_searches(searches + custom_searches(prefs.custom), prefs.active)
     log.info("Active categories: %s", ", ".join(search.name for search in chosen))
 
     seen = prune_seen(load_seen(SEEN_PATH), now, KEEP_SEEN_DAYS)

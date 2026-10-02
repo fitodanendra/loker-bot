@@ -6,7 +6,9 @@ HELP = (
     "/pilih fullstack — HANYA kategori ini (boleh lebih dari satu)\n"
     "/tambah motion — aktifkan kategori\n"
     "/hapus video — matikan kategori\n"
-    "/semua — aktifkan semua kategori"
+    "/semua — aktifkan semua kategori\n"
+    "/baru graphic designer — buat kategori baru\n"
+    "/buang graphicdesigner — hapus kategori buatan sendiri"
 )
 
 Active = frozenset[str]

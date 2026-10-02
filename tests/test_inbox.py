@@ -24,6 +24,16 @@ class ProcessUpdatesTest(unittest.TestCase):
         self.assertEqual(new_prefs.last_update_id, 6)
         self.assertEqual(len(replies), 2)
 
+    def test_baru_creates_custom_category_usable_by_later_commands(self):
+        prefs = Prefs(active=frozenset(CATEGORIES), last_update_id=0)
+        updates = [update(1, "/baru graphic designer"), update(2, "/pilih graphicdesigner")]
+
+        new_prefs, replies = process_updates(updates, OWNER, CATEGORIES, prefs)
+
+        self.assertEqual(new_prefs.custom, {"graphicdesigner": "graphic designer"})
+        self.assertEqual(new_prefs.active, frozenset({"graphicdesigner"}))
+        self.assertEqual(len(replies), 2)
+
     def test_ignores_messages_from_other_chats(self):
         prefs = Prefs(active=frozenset(CATEGORIES), last_update_id=0)
 
@@ -62,12 +72,12 @@ class PrefsStorageTest(unittest.TestCase):
     def test_missing_file_activates_all_categories(self):
         prefs = load_prefs(Path("/nonexistent/prefs.json"), CATEGORIES)
 
-        self.assertEqual(prefs, Prefs(active=frozenset(CATEGORIES), last_update_id=0))
+        self.assertEqual(prefs, Prefs(active=frozenset(CATEGORIES), last_update_id=0, custom={}))
 
     def test_roundtrip(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "prefs.json"
-            prefs = Prefs(active=frozenset({"video"}), last_update_id=42)
+            prefs = Prefs(active=frozenset({"video", "gd"}), last_update_id=42, custom={"gd": "gd"})
 
             save_prefs(path, prefs)
 

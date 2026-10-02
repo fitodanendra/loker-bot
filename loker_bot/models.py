@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
@@ -25,6 +25,7 @@ class Search:
     query: str
     title_must_include: tuple[str, ...] = ()
     name: str = ""
+    title_must_include_all: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

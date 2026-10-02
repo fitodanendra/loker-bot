@@ -36,6 +36,12 @@ class IsWantedTest(unittest.TestCase):
         job = make_job(title="Content Creator")
         self.assertTrue(is_wanted(job, Search(query="video editor"), SETTINGS, NOW))
 
+    def test_requires_all_words_when_title_must_include_all(self):
+        search = Search(query="graphic designer", title_must_include_all=("graphic", "designer"))
+
+        self.assertTrue(is_wanted(make_job(title="Senior Graphic Designer"), search, SETTINGS, NOW))
+        self.assertFalse(is_wanted(make_job(title="UI Designer"), search, SETTINGS, NOW))
+
     def test_rejects_other_location(self):
         job = make_job(location="Surabaya, Jawa Timur")
         self.assertFalse(is_wanted(job, SEARCH, SETTINGS, NOW))
