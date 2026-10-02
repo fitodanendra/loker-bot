@@ -2,12 +2,18 @@
  "active": [
   "3d",
   "fullstack",
+  "graphic",
+  "it",
   "motion",
+  "programmer",
   "uiux",
   "video"
  ],
  "custom": {
-  "3d": "3d"
+  "3d": "3d",
+  "it": "it",
+  "programmer": "programmer",
+  "graphic": "graphic"
  },
- "last_update_id": 681032115
+ "last_update_id": 681032119
 }
