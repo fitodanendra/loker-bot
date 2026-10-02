@@ -1,5 +1,7 @@
 # Loker Bot 🔔
 
+> 🛠 **Perawatan & kalau ada masalah:** baca [PANDUAN.md](PANDUAN.md).
+
 Bot Telegram yang mengecek lowongan baru setiap 10 menit dari **JobStreet, Kalibrr, dan LinkedIn**,
 lalu mengirim notifikasi + tombol link apply ke Telegram Anda.
 
