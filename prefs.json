@@ -2,9 +2,9 @@
  "active": [
   "3d",
   "fullstack",
-  "graphic",
   "it",
   "motion",
+  "motiondesign",
   "programmer",
   "uiux",
   "video"
@@ -13,7 +13,7 @@
   "3d": "3d",
   "it": "it",
   "programmer": "programmer",
-  "graphic": "graphic"
+  "motiondesign": "motion design"
  },
- "last_update_id": 681032119
+ "last_update_id": 681032121
 }
