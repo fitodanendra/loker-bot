@@ -1,10 +1,10 @@
 # Loker Bot 🔔
 
-Bot Telegram yang mengecek lowongan baru setiap 30 menit dari **JobStreet, Kalibrr, dan LinkedIn**,
+Bot Telegram yang mengecek lowongan baru setiap 10 menit dari **JobStreet, Kalibrr, dan LinkedIn**,
 lalu mengirim notifikasi + tombol link apply ke Telegram Anda.
 
 ## Cara kerja
-1. cron-job.org memicu GitHub Actions tiap 30 menit, yang menjalankan `python -m loker_bot.main` (gratis).
+1. cron-job.org memicu GitHub Actions tiap 10 menit, yang menjalankan `python -m loker_bot.main` (gratis).
 2. Bot mencari setiap kata kunci di `config.json`, menyaring judul, lokasi, dan umur lowongan.
 3. Lowongan yang belum pernah dikirim → dikirim ke Telegram, lalu dicatat di `seen.json`
    supaya tidak dikirim dua kali.
@@ -58,7 +58,7 @@ Kirim perintah ini ke bot (juga muncul di tombol menu `/`):
 | `/baru graphic designer` | Buat kategori baru (judul harus mengandung semua kata) |
 | `/buang graphicdesigner` | Hapus kategori buatan sendiri (maks. 10 kategori buatan) |
 
-Perintah dibaca setiap kali bot mengecek (maks. ±30 menit). Mau langsung? Buka tab **Actions → Run workflow**.
+Perintah dibaca setiap kali bot mengecek (maks. ±10 menit). Mau langsung? Buka tab **Actions → Run workflow**.
 Pilihan disimpan di `prefs.json`. Hanya chat ID pemilik yang bisa mengubah kategori.
 
 ## Mengubah kata kunci / lokasi
@@ -74,7 +74,7 @@ Edit `config.json`:
 | `max_age_hours` | Abaikan lowongan yang lebih lama dari ini |
 
 ## Catatan
-- Notifikasi tidak instan: jeda maksimal ±30 menit (+ delay GitHub beberapa menit).
+- Notifikasi tidak instan: jeda maksimal ±10 menit (+ delay GitHub beberapa menit).
 - Maksimal 25 notifikasi per putaran; sisanya dikirim di putaran berikutnya.
 - Glints & Instagram belum didukung (Glints memblokir akses otomatis, Instagram tidak punya API publik).
 - Kalau suatu situs mengubah tampilannya, sumber itu akan gagal sementara tanpa menghentikan sumber lain
