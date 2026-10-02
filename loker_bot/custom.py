@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+from loker_bot.commands import category_list
 from loker_bot.models import Search
 
 MAX_CUSTOM = 10
@@ -44,9 +45,11 @@ def _create(keyword: str, builtin, custom: Custom, active) -> Result:
         f"✅ Kategori baru “{name}” dibuat dan dinyalakan.\n"
         f"Bot akan mencari “{keyword}” dan hanya mengirim lowongan yang judulnya "
         f"mengandung semua kata: {', '.join(keyword.split())}.\n"
-        "Hasilnya muncul di pengecekan berikutnya."
+        "Kategori lain tidak berubah. Hasilnya muncul di pengecekan berikutnya."
     )
-    return {**custom, name: keyword}, active | {name}, reply
+    new_custom = {**custom, name: keyword}
+    new_active = active | {name}
+    return new_custom, new_active, reply + "\n\n" + category_list(builtin + tuple(new_custom), new_active)
 
 
 def _remove(keyword: str, builtin, custom: Custom, active) -> Result:
@@ -60,7 +63,8 @@ def _remove(keyword: str, builtin, custom: Custom, active) -> Result:
     new_active = active - {name}
     if not new_active:
         new_active = frozenset(builtin) | frozenset(remaining)
-    return remaining, new_active, f"🗑 Kategori “{name}” dibuang."
+    status = category_list(builtin + tuple(remaining), new_active)
+    return remaining, new_active, f"🗑 Kategori “{name}” dibuang.\n\n{status}"
 
 
 def custom_searches(custom: Custom) -> list[Search]:

@@ -57,6 +57,10 @@ def _changed(active: Active, categories: tuple[str, ...]):
     return active, "Siap! Mulai pengecekan berikutnya.\n\n" + _status(categories, active)
 
 
-def _status(categories: tuple[str, ...], active: Active) -> str:
+def category_list(categories: tuple[str, ...], active: Active) -> str:
     lines = [f"{'✅' if name in active else '❌'} {name}" for name in categories]
-    return "Kategori:\n" + "\n".join(lines) + "\n\n" + HELP
+    return "Kategori:\n" + "\n".join(lines)
+
+
+def _status(categories: tuple[str, ...], active: Active) -> str:
+    return category_list(categories, active) + "\n\n" + HELP

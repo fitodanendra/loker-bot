@@ -15,6 +15,13 @@ class BaruTest(unittest.TestCase):
         self.assertIn("graphicdesigner", active)
         self.assertIn("graphic designer", reply)
 
+    def test_reply_lists_all_categories_with_status(self):
+        _, _, reply = handle_custom_command("/baru editor", BUILTIN, {}, frozenset({"video"}))
+
+        self.assertIn("✅ video", reply)
+        self.assertIn("❌ motion", reply)
+        self.assertIn("✅ editor", reply)
+
     def test_does_not_mutate_inputs(self):
         original = {"a": "a"}
         handle_custom_command("/baru b", BUILTIN, original, ACTIVE)
