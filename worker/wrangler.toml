@@ -1,0 +1,10 @@
+name = "loker-bot"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# Secrets (set with `wrangler secret put`, never committed):
+#   TELEGRAM_BOT_TOKEN, OWNER_CHAT_ID, WEBHOOK_SECRET, STATE_SECRET
+
+[[kv_namespaces]]
+binding = "LOKER"
+id = "743ea36a7f914a21bed074e85e9fd93e"

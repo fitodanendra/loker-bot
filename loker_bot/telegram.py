@@ -59,22 +59,6 @@ class TelegramClient:
             "reply_markup": {"inline_keyboard": [[{"text": APPLY_BUTTON_TEXT, "url": job.url}]]},
         })
 
-    def send_text(self, text: str) -> None:
-        self._call("sendMessage", {"chat_id": self._chat_id, "text": text})
-
-    def get_updates(self, after_update_id: int) -> list[dict]:
-        response = self._call("getUpdates", {
-            "offset": after_update_id + 1,
-            "timeout": 0,
-            "allowed_updates": ["message"],
-        })
-        return response.get("result", [])
-
-    def set_commands(self, commands: list[tuple[str, str]]) -> None:
-        self._call("setMyCommands", {
-            "commands": [{"command": name, "description": desc} for name, desc in commands],
-        })
-
     def _call(self, method: str, payload: dict) -> dict:
         url = API_URL.format(token=self._token, method=method)
         try:

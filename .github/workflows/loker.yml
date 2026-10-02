@@ -5,7 +5,7 @@ on:
   workflow_dispatch:          # also the "Run workflow" button for manual runs
 
 permissions:
-  contents: write             # needed to save seen.json back to the repo
+  contents: read              # state lives in the Cloudflare Worker, nothing is committed
 
 concurrency:
   group: loker-bot
@@ -22,18 +22,19 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Run tests
-        run: python -m unittest
+        run: |
+          python -m unittest
+          cd worker && node --test
 
       - name: Check new jobs and notify Telegram
         run: python -m loker_bot.main
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-      - name: Save sent-job history and chosen categories
-        run: |
-          git config user.name "loker-bot"
-          git config user.email "loker-bot@users.noreply.github.com"
-          git add seen.json prefs.json
-          git diff --cached --quiet || (git commit -m "chore: update seen jobs" && git push)
+          STATE_URL: ${{ secrets.STATE_URL }}
+          STATE_SECRET: ${{ secrets.STATE_SECRET }}

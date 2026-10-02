@@ -1,7 +1,7 @@
 import json
 import urllib.parse
 import urllib.request
-from typing import Any
+from typing import Any, Optional
 
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -25,10 +25,18 @@ def get_json(url: str) -> Any:
 
 
 def post_json(url: str, payload: dict[str, Any]) -> Any:
+    return request_json("POST", url, {}, payload)
+
+
+def request_json(method: str, url: str, headers: dict, payload: Optional[dict] = None) -> Any:
+    """Send JSON (optional) and return the parsed JSON response, or None for an empty body."""
+    data = None if payload is None else json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
         url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
+        data=data,
+        method=method,
+        headers={"Content-Type": "application/json", "User-Agent": USER_AGENT, **headers},
     )
     with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
-        return json.loads(response.read().decode("utf-8"))
+        body = response.read().decode("utf-8")
+    return json.loads(body) if body else None
