@@ -58,6 +58,11 @@ Kirim perintah ini ke bot (juga muncul di tombol menu `/`):
 | `/baru graphic designer` | Buat kategori baru (judul harus mengandung semua kata) |
 | `/buang graphicdesigner` | Hapus kategori buatan sendiri (maks. 10 kategori buatan) |
 
+| `/lokasi` | Lihat lokasi aktif |
+| `/tambahlokasi bandung` | Tambah lokasi (boleh dua kata: `/tambahlokasi tangerang selatan`) |
+| `/hapuslokasi bogor` | Hapus lokasi |
+| `/semualokasi` | Cari di seluruh Indonesia |
+
 Perintah dibaca setiap kali bot mengecek (maks. ±10 menit). Mau langsung? Buka tab **Actions → Run workflow**.
 Pilihan disimpan di `prefs.json`. Hanya chat ID pemilik yang bisa mengubah kategori.
 

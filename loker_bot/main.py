@@ -6,6 +6,7 @@ Usage:
 """
 
 import logging
+from dataclasses import replace
 import os
 import sys
 import time
@@ -39,6 +40,10 @@ BOT_COMMANDS = [
     ("semua", "Aktifkan semua kategori"),
     ("baru", "Buat kategori baru, mis. /baru graphic designer"),
     ("buang", "Hapus kategori buatan sendiri"),
+    ("lokasi", "Lihat lokasi aktif"),
+    ("tambahlokasi", "Tambah lokasi, mis. /tambahlokasi bandung"),
+    ("hapuslokasi", "Hapus lokasi, mis. /hapuslokasi bogor"),
+    ("semualokasi", "Cari di seluruh Indonesia"),
 ]
 
 SourceFn = Callable[[str], list[Job]]
@@ -111,7 +116,9 @@ def _print_sender(job: Job, query: str) -> None:
     print(format_message(job, query), f"\n🔗 {job.url}\n")
 
 
-def _read_commands(client: TelegramClient, categories: tuple[str, ...]) -> Prefs:
+def _read_commands(
+    client: TelegramClient, categories: tuple[str, ...], default_locations: tuple[str, ...],
+) -> Prefs:
     """Apply category commands the owner sent since the last run, and answer them."""
     prefs = load_prefs(PREFS_PATH, categories)
     try:
@@ -121,7 +128,9 @@ def _read_commands(client: TelegramClient, categories: tuple[str, ...]) -> Prefs
         log.warning("Could not read Telegram commands: %s", error)
         return prefs
 
-    new_prefs, replies = process_updates(updates, client.chat_id, categories, prefs)
+    new_prefs, replies = process_updates(
+        updates, client.chat_id, categories, prefs, default_locations,
+    )
     for reply in replies:
         try:
             client.send_text(reply)
@@ -145,10 +154,13 @@ def run(dry_run: bool) -> int:
         prefs = load_prefs(PREFS_PATH, categories)
         send = _print_sender
     else:
-        prefs = _read_commands(client, categories)
+        prefs = _read_commands(client, categories, settings.locations)
         send = _telegram_sender(client)
+    if prefs.locations is not None:
+        settings = replace(settings, locations=prefs.locations)
     chosen = active_searches(searches + custom_searches(prefs.custom), prefs.active)
     log.info("Active categories: %s", ", ".join(search.name for search in chosen))
+    log.info("Locations: %s", ", ".join(settings.locations) or "all of Indonesia")
 
     seen = prune_seen(load_seen(SEEN_PATH), now, KEEP_SEEN_DAYS)
     jobs = collect_new_jobs(chosen, settings, seen, SOURCES, now)

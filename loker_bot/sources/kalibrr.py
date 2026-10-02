@@ -8,6 +8,7 @@ SOURCE = "Kalibrr"
 SEARCH_URL = "https://www.kalibrr.com/kjs/job_board/search"
 JOB_URL = "https://www.kalibrr.com/c/{company}/jobs/{job_id}/{slug}"
 PAGE_SIZE = 30
+COUNTRY = "indonesia"
 
 
 def search(query: str) -> list[Job]:
@@ -16,7 +17,13 @@ def search(query: str) -> list[Job]:
 
 
 def parse(raw: dict[str, Any]) -> list[Job]:
-    return [_to_job(item) for item in raw.get("jobs") or []]
+    return [_to_job(item) for item in raw.get("jobs") or [] if _in_indonesia(item)]
+
+
+def _in_indonesia(item: dict[str, Any]) -> bool:
+    address = ((item.get("google_location") or {}).get("address_components")) or {}
+    country = (address.get("country") or COUNTRY).lower()
+    return country == COUNTRY
 
 
 def _to_job(item: dict[str, Any]) -> Job:

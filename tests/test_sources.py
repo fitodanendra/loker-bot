@@ -52,6 +52,16 @@ class KalibrrParseTest(unittest.TestCase):
         self.assertIsNotNone(first.posted_at)
 
 
+class KalibrrCountryTest(unittest.TestCase):
+    def test_skips_jobs_outside_indonesia(self):
+        raw = {"jobs": [{
+            "id": 1, "name": "UI Designer", "slug": "ui", "company": {"code": "c"},
+            "google_location": {"address_components": {"city": "Makati", "country": "Philippines"}},
+        }]}
+
+        self.assertEqual(kalibrr.parse(raw), [])
+
+
 class LinkedInParseTest(unittest.TestCase):
     def test_parses_job_cards(self):
         jobs = linkedin.parse(load("linkedin.html"))

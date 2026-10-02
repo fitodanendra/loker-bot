@@ -8,7 +8,8 @@ HELP = (
     "/hapus video — matikan kategori\n"
     "/semua — aktifkan semua kategori\n"
     "/baru graphic designer — buat kategori baru\n"
-    "/buang graphicdesigner — hapus kategori buatan sendiri"
+    "/buang graphicdesigner — hapus kategori buatan sendiri\n"
+    "/lokasi — atur lokasi lowongan"
 )
 
 Active = frozenset[str]

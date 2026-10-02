@@ -34,6 +34,16 @@ class ProcessUpdatesTest(unittest.TestCase):
         self.assertEqual(new_prefs.active, frozenset({"graphicdesigner"}))
         self.assertEqual(len(replies), 2)
 
+    def test_location_commands_start_from_default_locations(self):
+        prefs = Prefs(active=frozenset(CATEGORIES), last_update_id=0)
+
+        new_prefs, _ = process_updates(
+            [update(3, "/tambahlokasi bandung")], OWNER, CATEGORIES, prefs,
+            default_locations=("Jakarta",),
+        )
+
+        self.assertEqual(new_prefs.locations, ("Jakarta", "Bandung"))
+
     def test_ignores_messages_from_other_chats(self):
         prefs = Prefs(active=frozenset(CATEGORIES), last_update_id=0)
 
@@ -77,7 +87,8 @@ class PrefsStorageTest(unittest.TestCase):
     def test_roundtrip(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "prefs.json"
-            prefs = Prefs(active=frozenset({"video", "gd"}), last_update_id=42, custom={"gd": "gd"})
+            prefs = Prefs(active=frozenset({"video", "gd"}), last_update_id=42, custom={"gd": "gd"},
+                          locations=())
 
             save_prefs(path, prefs)
 
