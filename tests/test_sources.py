@@ -3,7 +3,8 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from loker_bot.sources import dealls, jobstreet, kalibrr, kitalulus, linkedin
+from loker_bot.money import format_salary_range
+from loker_bot.sources import dealls, himalayas, jobstreet, kalibrr, kitalulus, linkedin
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -153,6 +154,61 @@ class KitalulusDateTest(unittest.TestCase):
 
     def test_returns_none_for_unknown_format(self):
         self.assertIsNone(kitalulus.parse_updated("Baru saja", self.NOW))
+
+
+class HimalayasParseTest(unittest.TestCase):
+    def test_parses_remote_jobs_with_link_back_and_salary(self):
+        jobs = himalayas.parse(json.loads(load("himalayas.json")))
+
+        self.assertEqual(len(jobs), 3)
+        first = jobs[0]
+        self.assertEqual(first.source, "Himalayas")
+        self.assertEqual(first.job_id, "g2i/jobs/senior-engineer-1499993060")
+        self.assertEqual(first.title, "Senior Engineer")
+        self.assertEqual(first.company, "G2i")
+        self.assertEqual(first.url, "https://himalayas.app/companies/g2i/jobs/senior-engineer-1499993060")
+        self.assertEqual(first.location, "Seluruh dunia")
+        self.assertTrue(first.is_remote)
+        self.assertEqual(first.salary, "USD 50 – 150 / jam")
+        self.assertEqual(first.posted_at, datetime.fromtimestamp(1791079599, timezone.utc))
+        self.assertIsNone(jobs[1].salary)
+
+    def test_describes_country_restrictions(self):
+        few = _himalayas_item(locationRestrictions=["Indonesia", "Malaysia"])
+        many = _himalayas_item(locationRestrictions=["Indonesia", "Japan", "India", "Vietnam"])
+
+        jobs = himalayas.parse({"jobs": [few, many]})
+
+        self.assertEqual(jobs[0].location, "Indonesia, Malaysia")
+        self.assertEqual(jobs[1].location, "4 negara, termasuk Indonesia")
+
+    def test_skips_jobs_not_open_to_indonesia(self):
+        raw = {"jobs": [_himalayas_item(locationRestrictions=["United States"])]}
+
+        self.assertEqual(himalayas.parse(raw), [])
+
+    def test_returns_empty_list_when_jobs_missing(self):
+        self.assertEqual(himalayas.parse({}), [])
+
+
+def _himalayas_item(**overrides):
+    item = {
+        "title": "Video Editor", "companyName": "Acme", "minSalary": 60000, "maxSalary": 90000,
+        "salaryPeriod": "annual", "currency": "USD", "locationRestrictions": [],
+        "pubDate": 1791079599, "guid": "https://himalayas.app/companies/acme/jobs/video-editor",
+    }
+    return {**item, **overrides}
+
+
+class MoneyTest(unittest.TestCase):
+    def test_formats_rupiah_and_foreign_ranges(self):
+        self.assertEqual(format_salary_range(8_000_000, 10_000_000), "Rp 8.000.000 – 10.000.000")
+        self.assertEqual(format_salary_range(5_000_000, None), "Rp 5.000.000")
+        self.assertEqual(
+            format_salary_range(60000, 90000, currency="USD", period="tahun"),
+            "USD 60.000 – 90.000 / tahun",
+        )
+        self.assertIsNone(format_salary_range(0, 0))
 
 
 class LinkedInParseTest(unittest.TestCase):

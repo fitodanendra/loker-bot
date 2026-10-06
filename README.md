@@ -2,13 +2,13 @@
 
 > 🛠 **Perawatan & kalau ada masalah:** baca [PANDUAN.md](PANDUAN.md).
 
-Bot Telegram yang mengecek lowongan baru setiap 10 menit dari **JobStreet, Kalibrr, LinkedIn, Dealls, dan Kitalulus**,
+Bot Telegram yang mengecek lowongan baru setiap 10 menit dari **JobStreet, Kalibrr, LinkedIn, Dealls, Kitalulus, dan Himalayas (remote internasional)**,
 lalu mengirim notifikasi + tombol link apply ke Telegram Anda.
 
 ## Cara kerja
 ```
 cron-job.org ──tiap 10 menit──▶ GitHub Actions (python -m loker_bot.main)
-                                   │  cari lowongan JobStreet / Kalibrr / LinkedIn / Dealls / Kitalulus
+                                   │  cari lowongan JobStreet / Kalibrr / LinkedIn / Dealls / Kitalulus / Himalayas
                                    │  kirim notifikasi ke Telegram
                                    ▼
 Telegram ──perintah /pilih dll──▶ Cloudflare Worker (worker/) ──▶ Workers KV
