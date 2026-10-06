@@ -1,0 +1,79 @@
+{
+  "code": 200,
+  "data": {
+    "docs": [
+      {
+        "id": "6ac3ba48a38e540012e98374",
+        "slug": "video-editor-day-shift-2",
+        "role": "Video Editor (Day Shift)",
+        "status": "active",
+        "publishedAt": "2026-10-05T14:55:04.907Z",
+        "workplaceType": "onSite",
+        "salaryRange": {
+          "start": 8000000,
+          "end": 10000000
+        },
+        "salaryType": "paid",
+        "city": {
+          "name": "Jakarta Selatan",
+          "id": 158
+        },
+        "country": {
+          "name": "Indonesia",
+          "id": 102
+        },
+        "company": {
+          "name": "Ku Creatives Unlimited",
+          "slug": "ku-creatives-unlimited"
+        }
+      },
+      {
+        "id": "6ac3b9e737fb9700122d708d",
+        "slug": "video-editor-middle-shift-1",
+        "role": "Video Editor (Middle Shift)",
+        "status": "active",
+        "publishedAt": "2026-10-05T14:53:27.662Z",
+        "workplaceType": "onSite",
+        "salaryRange": null,
+        "salaryType": "paid",
+        "city": {
+          "name": "Jakarta Selatan",
+          "id": 158
+        },
+        "country": {
+          "name": "Indonesia",
+          "id": 102
+        },
+        "company": {
+          "name": "Ku Creatives Unlimited",
+          "slug": "ku-creatives-unlimited"
+        }
+      },
+      {
+        "id": "6ab51e400eeb390013ebea2a",
+        "slug": "video-editor-night-shift-2",
+        "role": "Video Editor - Night Shift",
+        "status": "active",
+        "publishedAt": "2026-09-24T12:57:36.032Z",
+        "workplaceType": "onSite",
+        "salaryRange": null,
+        "salaryType": "paid",
+        "city": {
+          "name": "Jakarta Selatan",
+          "id": 158
+        },
+        "country": {
+          "name": "Indonesia",
+          "id": 102
+        },
+        "company": {
+          "name": "Ku Creatives Unlimited",
+          "slug": "ku-creatives-unlimited"
+        }
+      }
+    ],
+    "totalDocs": 3,
+    "totalPages": 1,
+    "page": 1
+  }
+}

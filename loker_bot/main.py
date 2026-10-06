@@ -19,7 +19,7 @@ from loker_bot.config import ConfigError, load_config
 from loker_bot.filters import is_wanted
 from loker_bot.prefs import active_searches, custom_searches, prefs_from_dict
 from loker_bot.models import Job, Search, Settings
-from loker_bot.sources import jobstreet, kalibrr, linkedin
+from loker_bot.sources import dealls, jobstreet, kalibrr, linkedin
 from loker_bot.state import State, StateClient, StateError
 from loker_bot.store import Seen, prune_seen, with_seen
 from loker_bot.telegram import TelegramClient, format_message
@@ -39,6 +39,7 @@ SOURCES: dict[str, SourceFn] = {
     "JobStreet": jobstreet.search,
     "Kalibrr": kalibrr.search,
     "LinkedIn": linkedin.search,
+    "Dealls": dealls.search,
 }
 
 

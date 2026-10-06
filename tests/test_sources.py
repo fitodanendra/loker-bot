@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from loker_bot.sources import jobstreet, kalibrr, linkedin
+from loker_bot.sources import dealls, jobstreet, kalibrr, linkedin
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -60,6 +60,51 @@ class KalibrrCountryTest(unittest.TestCase):
         }]}
 
         self.assertEqual(kalibrr.parse(raw), [])
+
+
+class DeallsParseTest(unittest.TestCase):
+    def test_parses_jobs_with_slug_link_and_salary(self):
+        jobs = dealls.parse(json.loads(load("dealls.json")))
+
+        self.assertEqual(len(jobs), 3)
+        first = jobs[0]
+        self.assertEqual(first.source, "Dealls")
+        self.assertEqual(first.job_id, "6ac3ba48a38e540012e98374")
+        self.assertEqual(first.title, "Video Editor (Day Shift)")
+        self.assertEqual(first.company, "Ku Creatives Unlimited")
+        self.assertEqual(first.location, "Jakarta Selatan")
+        self.assertEqual(
+            first.url, "https://dealls.com/loker/video-editor-day-shift-2~ku-creatives-unlimited"
+        )
+        self.assertEqual(first.posted_at.tzinfo, timezone.utc)
+        self.assertEqual(first.salary, "Rp 8.000.000 – 10.000.000")
+        self.assertFalse(first.is_remote)
+
+    def test_marks_remote_workplace(self):
+        raw = {"data": {"docs": [_dealls_item(workplaceType="remote")]}}
+
+        self.assertTrue(dealls.parse(raw)[0].is_remote)
+
+    def test_skips_inactive_jobs_and_jobs_outside_indonesia(self):
+        raw = {"data": {"docs": [
+            _dealls_item(status="closed"),
+            _dealls_item(country={"name": "Singapore"}),
+        ]}}
+
+        self.assertEqual(dealls.parse(raw), [])
+
+    def test_returns_empty_list_when_docs_missing(self):
+        self.assertEqual(dealls.parse({}), [])
+
+
+def _dealls_item(**overrides):
+    item = {
+        "id": "1", "slug": "editor", "role": "Editor", "status": "active",
+        "publishedAt": "2026-10-01T10:00:00Z", "workplaceType": "onSite",
+        "salaryRange": None, "city": {"name": "Jakarta"}, "country": {"name": "Indonesia"},
+        "company": {"name": "PT A", "slug": "pt-a"},
+    }
+    return {**item, **overrides}
 
 
 class LinkedInParseTest(unittest.TestCase):
