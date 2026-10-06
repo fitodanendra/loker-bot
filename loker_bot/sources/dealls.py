@@ -1,7 +1,8 @@
-from typing import Any, Optional
+from typing import Any
 
 from loker_bot.dates import parse_iso
 from loker_bot.http import build_url, get_json
+from loker_bot.money import format_salary_range
 from loker_bot.models import Job
 
 SOURCE = "Dealls"
@@ -36,6 +37,7 @@ def _is_open_in_indonesia(item: dict[str, Any]) -> bool:
 
 def _to_job(item: dict[str, Any]) -> Job:
     company = item.get("company") or {}
+    salary = item.get("salaryRange") or {}
     return Job(
         source=SOURCE,
         job_id=str(item["id"]),
@@ -45,18 +47,6 @@ def _to_job(item: dict[str, Any]) -> Job:
         url=JOB_URL.format(slug=item.get("slug", ""), company=company.get("slug", "")),
         posted_at=parse_iso(item.get("publishedAt")),
         is_remote=item.get("workplaceType") == REMOTE,
-        salary=_format_salary(item.get("salaryRange")),
+        salary=format_salary_range(salary.get("start"), salary.get("end")),
     )
 
-
-def _format_salary(salary_range: Optional[dict[str, Any]]) -> Optional[str]:
-    if not salary_range or not salary_range.get("start"):
-        return None
-    start, end = salary_range["start"], salary_range.get("end")
-    if not end or end == start:
-        return f"Rp {_rupiah(start)}"
-    return f"Rp {_rupiah(start)} – {_rupiah(end)}"
-
-
-def _rupiah(amount: int) -> str:
-    return f"{amount:,}".replace(",", ".")

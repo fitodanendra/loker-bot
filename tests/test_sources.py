@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from loker_bot.sources import dealls, jobstreet, kalibrr, linkedin
+from loker_bot.sources import dealls, jobstreet, kalibrr, kitalulus, linkedin
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -105,6 +105,54 @@ def _dealls_item(**overrides):
         "company": {"name": "PT A", "slug": "pt-a"},
     }
     return {**item, **overrides}
+
+
+class KitalulusParseTest(unittest.TestCase):
+    NOW = datetime(2026, 10, 6, 8, 0, tzinfo=timezone.utc)  # 15:00 WIB
+
+    def test_parses_jobs_from_embedded_page_data(self):
+        jobs = kitalulus.parse(load("kitalulus.html"), self.NOW)
+
+        self.assertEqual(len(jobs), 3)
+        first = jobs[0]
+        self.assertEqual(first.source, "Kitalulus")
+        self.assertEqual(first.job_id, "ojxx8DGGnb5")
+        self.assertEqual(first.title, "Full Stack Developer")
+        self.assertEqual(first.company, "PT Istidata Indopacific Solution Centre")
+        self.assertEqual(first.location, "Jakarta Utara")
+        self.assertEqual(
+            first.url, "https://www.kitalulus.com/lowongan/detail/full-stack-developer-j5gy"
+        )
+        self.assertEqual(first.salary, "Rp 6.000.000 – 9.000.000")
+        self.assertEqual(first.posted_at, datetime(2026, 10, 6, tzinfo=timezone.utc))
+        self.assertIsNone(jobs[1].salary)
+
+    def test_returns_empty_list_when_page_has_no_vacancies(self):
+        self.assertEqual(kitalulus.parse("<html></html>", self.NOW), [])
+
+    def test_skips_closed_jobs(self):
+        html = load("kitalulus.html").replace('isClosed\\": false', 'isClosed\\": true', 1)
+
+        self.assertEqual(len(kitalulus.parse(html, self.NOW)), 2)
+
+
+class KitalulusDateTest(unittest.TestCase):
+    NOW = datetime(2026, 10, 6, 20, 0, tzinfo=timezone.utc)  # already 7 Oct in WIB
+
+    def test_parses_relative_and_absolute_dates_as_wib_calendar_days(self):
+        cases = {
+            "Terakhir diperbarui hari ini": datetime(2026, 10, 7, tzinfo=timezone.utc),
+            "Terakhir diperbarui 1 hari yang lalu": datetime(2026, 10, 6, tzinfo=timezone.utc),
+            "Terakhir diperbarui 2 minggu yang lalu": datetime(2026, 9, 23, tzinfo=timezone.utc),
+            "Terakhir diperbarui pada 26 Sep 2026": datetime(2026, 9, 26, tzinfo=timezone.utc),
+            "Terakhir diperbarui pada 3 Agu 2026": datetime(2026, 8, 3, tzinfo=timezone.utc),
+        }
+        for text, expected in cases.items():
+            with self.subTest(text=text):
+                self.assertEqual(kitalulus.parse_updated(text, self.NOW), expected)
+
+    def test_returns_none_for_unknown_format(self):
+        self.assertIsNone(kitalulus.parse_updated("Baru saja", self.NOW))
 
 
 class LinkedInParseTest(unittest.TestCase):
